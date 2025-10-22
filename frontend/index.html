@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Riesgo de Cáncer de Hígado</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 Sistema de Predicción de Riesgo de Cáncer de Hígado</h1>
+            <p class="subtitle">Evaluación basada en Inteligencia Artificial</p>
+        </header>
+
+        <main>
+            <form id="predictionForm" class="prediction-form">
+                <div class="form-section">
+                    <h2>Información Demográfica</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="age">Edad</label>
+                            <input type="number" id="age" name="age" min="0" max="120" required>
+                            <span class="form-help">Años (0-120)</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">Género</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Male">Masculino</option>
+                                <option value="Female">Femenino</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bmi">IMC (Índice de Masa Corporal)</label>
+                            <input type="number" id="bmi" name="bmi" min="10" max="60" step="0.1" required>
+                            <span class="form-help">kg/m² (10-60)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Estilo de Vida</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="alcohol_consumption">Consumo de Alcohol</label>
+                            <select id="alcohol_consumption" name="alcohol_consumption" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Never">Nunca</option>
+                                <option value="Occasional">Ocasional</option>
+                                <option value="Regular">Regular</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="smoking_status">Estado de Fumador</label>
+                            <select id="smoking_status" name="smoking_status" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Never">Nunca</option>
+                                <option value="Former">Ex-fumador</option>
+                                <option value="Current">Fumador actual</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="physical_activity_level">Nivel de Actividad Física</label>
+                            <select id="physical_activity_level" name="physical_activity_level" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Low">Bajo</option>
+                                <option value="Moderate">Moderado</option>
+                                <option value="High">Alto</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Indicadores Clínicos</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="liver_function_score">Puntuación de Función Hepática</label>
+                            <input type="number" id="liver_function_score" name="liver_function_score" 
+                                   min="0" max="100" step="0.1" required>
+                            <span class="form-help">0-100 puntos</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="alpha_fetoprotein_level">Nivel de Alfa-fetoproteína</label>
+                            <input type="number" id="alpha_fetoprotein_level" name="alpha_fetoprotein_level" 
+                                   min="0" max="1000" step="0.01" required>
+                            <span class="form-help">ng/mL (0-1000)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Condiciones Médicas</h2>
+                    
+                    <div class="checkbox-grid">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="hepatitis_b" name="hepatitis_b" value="1">
+                            <label for="hepatitis_b">Hepatitis B</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="hepatitis_c" name="hepatitis_c" value="1">
+                            <label for="hepatitis_c">Hepatitis C</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="cirrhosis_history" name="cirrhosis_history" value="1">
+                            <label for="cirrhosis_history">Historial de Cirrosis</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="family_history_cancer" name="family_history_cancer" value="1">
+                            <label for="family_history_cancer">Historial Familiar de Cáncer</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="diabetes" name="diabetes" value="1">
+                            <label for="diabetes">Diabetes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Evaluar Riesgo</span>
+                        <span class="btn-loader" style="display: none;">⏳ Procesando...</span>
+                    </button>
+                    <button type="reset" class="btn-secondary">Limpiar Formulario</button>
+                </div>
+            </form>
+
+            <!-- Sección de Resultados (inicialmente oculta) -->
+            <div id="resultsSection" class="results-section" style="display: none;">
+                <div class="results-card">
+                    <h2>Resultado de la Evaluación</h2>
+                    
+                    <div class="risk-indicator" id="riskIndicator">
+                        <div class="risk-percentage">
+                            <span class="percentage-value" id="riskPercentage">--</span>
+                            <span class="percentage-symbol">%</span>
+                        </div>
+                        <div class="risk-label" id="riskLabel">--</div>
+                    </div>
+
+                    <div class="risk-gauge">
+                        <div class="gauge-bar">
+                            <div class="gauge-fill" id="gaugeFill"></div>
+                        </div>
+                        <div class="gauge-labels">
+                            <span>0%</span>
+                            <span>25%</span>
+                            <span>50%</span>
+                            <span>75%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+
+                    <div class="action-message" id="actionMessage">
+                        <div class="message-icon" id="messageIcon"></div>
+                        <div class="message-text" id="messageText"></div>
+                    </div>
+
+                    <div class="results-actions">
+                        <button onclick="window.print()" class="btn-secondary">📄 Imprimir Resultado</button>
+                        <button onclick="resetForm()" class="btn-primary">Nueva Evaluación</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensajes de Error -->
+            <div id="errorMessage" class="error-message" style="display: none;">
+                <div class="error-content">
+                    <span class="error-icon">⚠️</span>
+                    <span id="errorText"></span>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p class="disclaimer">
+                <strong>Aviso Importante:</strong> Esta herramienta es solo para fines de evaluación preliminar 
+                y no reemplaza el diagnóstico médico profesional. Siempre consulte con un médico especialista 
+                para obtener un diagnóstico definitivo.
+            </p>
+            <p class="copyright">© 2024 Sistema de Predicción de Cáncer - Desarrollado con IA</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
