@@ -3,16 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predicción de Riesgo de Cáncer de Hígado</title>
+    <meta name="description" content="Sistema de predicción de riesgo de cáncer de hígado basado en IA">
+    <title>Predicción de Riesgo de Cáncer de Hígado - Sistema IA</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Preload para mejorar rendimiento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🏥 Sistema de Predicción de Riesgo de Cáncer de Hígado</h1>
-            <p class="subtitle">Evaluación basada en Inteligencia Artificial</p>
+            <div class="header-content">
+                <div class="header-icon">🏥</div>
+                <h1>Sistema de Predicción de Riesgo de Cáncer de Hígado</h1>
+                <p class="subtitle">Evaluación Basada en Inteligencia Artificial y Deep Learning</p>
+                <div class="header-badges">
+                    <span class="badge">IA Avanzada</span>
+                    <span class="badge">Predicción en Tiempo Real</span>
+                    <span class="badge">Resultados Instantáneos</span>
+                </div>
+            </div>
         </header>
+
+        <!-- Indicador de progreso -->
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="progress-text" id="progressText">Analizando datos...</p>
+        </div>
 
         <main>
             <form id="predictionForm" class="prediction-form">
@@ -142,37 +162,97 @@
             <!-- Sección de Resultados (inicialmente oculta) -->
             <div id="resultsSection" class="results-section" style="display: none;">
                 <div class="results-card">
-                    <h2>Resultado de la Evaluación</h2>
+                    <div class="results-header">
+                        <span class="results-icon">📊</span>
+                        <h2>Resultado de la Evaluación</h2>
+                    </div>
                     
+                    <!-- Indicador principal de riesgo -->
                     <div class="risk-indicator" id="riskIndicator">
-                        <div class="risk-percentage">
-                            <span class="percentage-value" id="riskPercentage">--</span>
-                            <span class="percentage-symbol">%</span>
+                        <div class="risk-circle">
+                            <svg class="progress-ring" width="200" height="200">
+                                <circle class="progress-ring-circle-bg" 
+                                        stroke="#e0e0e0" 
+                                        stroke-width="15" 
+                                        fill="transparent" 
+                                        r="85" 
+                                        cx="100" 
+                                        cy="100"/>
+                                <circle id="progressRingCircle" 
+                                        class="progress-ring-circle" 
+                                        stroke-width="15" 
+                                        fill="transparent" 
+                                        r="85" 
+                                        cx="100" 
+                                        cy="100"/>
+                            </svg>
+                            <div class="risk-percentage-overlay">
+                                <span class="percentage-value" id="riskPercentage">--</span>
+                                <span class="percentage-symbol">%</span>
+                            </div>
                         </div>
-                        <div class="risk-label" id="riskLabel">--</div>
+                        <div class="risk-label-container">
+                            <div class="risk-label" id="riskLabel">--</div>
+                            <div class="risk-sublabel">Nivel de Riesgo</div>
+                        </div>
                     </div>
 
+                    <!-- Barra de gauge mejorada -->
                     <div class="risk-gauge">
+                        <div class="gauge-title">Escala de Riesgo</div>
                         <div class="gauge-bar">
-                            <div class="gauge-fill" id="gaugeFill"></div>
+                            <div class="gauge-marker" id="gaugeMarker"></div>
                         </div>
                         <div class="gauge-labels">
-                            <span>0%</span>
-                            <span>25%</span>
-                            <span>50%</span>
-                            <span>75%</span>
-                            <span>100%</span>
+                            <div class="gauge-label-item">
+                                <span class="gauge-dot" style="background: var(--success-color);"></span>
+                                <span>Bajo (0-50%)</span>
+                            </div>
+                            <div class="gauge-label-item">
+                                <span class="gauge-dot" style="background: var(--danger-color);"></span>
+                                <span>Alto (51-100%)</span>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Mensaje de acción destacado -->
                     <div class="action-message" id="actionMessage">
-                        <div class="message-icon" id="messageIcon"></div>
+                        <div class="message-header">
+                            <div class="message-icon" id="messageIcon"></div>
+                            <h3>Recomendación Clínica</h3>
+                        </div>
                         <div class="message-text" id="messageText"></div>
                     </div>
 
+                    <!-- Detalles adicionales -->
+                    <div class="results-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Probabilidad:</span>
+                            <span class="detail-value" id="riskProbability">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Fecha de Evaluación:</span>
+                            <span class="detail-value" id="evaluationDate">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Acción Requerida:</span>
+                            <span class="detail-value" id="actionRequired">--</span>
+                        </div>
+                    </div>
+
                     <div class="results-actions">
-                        <button onclick="window.print()" class="btn-secondary">📄 Imprimir Resultado</button>
-                        <button onclick="resetForm()" class="btn-primary">Nueva Evaluación</button>
+                        <button onclick="window.print()" class="btn-secondary">
+                            <span>📄</span>
+                            Imprimir Resultado
+                        </button>
+                        <button onclick="downloadResults()" class="btn-secondary">
+                            <span>💾</span>
+                            Guardar PDF
+                        </button>
+                        <button onclick="resetForm()" class="btn-primary">
+                            <span>🔄</span>
+                            Nueva Evaluación
+                        </button>
                     </div>
                 </div>
             </div>

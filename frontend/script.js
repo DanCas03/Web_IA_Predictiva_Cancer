@@ -135,23 +135,28 @@ function validateFormData(data) {
 }
 
 /**
- * Muestra los resultados de la predicción
+ * Muestra los resultados de la predicción con animaciones avanzadas
  */
 function displayResults(prediction) {
-    // Actualizar porcentaje
+    // Referencias a elementos
     const percentageElement = document.getElementById('riskPercentage');
     const riskLabelElement = document.getElementById('riskLabel');
     const actionMessageElement = document.getElementById('actionMessage');
     const messageIconElement = document.getElementById('messageIcon');
     const messageTextElement = document.getElementById('messageText');
-    const gaugeFillElement = document.getElementById('gaugeFill');
-    
-    // Establecer valores
-    percentageElement.textContent = prediction.risk_percentage.toFixed(1);
+    const gaugeMarkerElement = document.getElementById('gaugeMarker');
+    const progressRingCircle = document.getElementById('progressRingCircle');
+    const riskProbabilityElement = document.getElementById('riskProbability');
+    const evaluationDateElement = document.getElementById('evaluationDate');
+    const actionRequiredElement = document.getElementById('actionRequired');
     
     // Determinar clase de riesgo
     const isHighRisk = prediction.risk_percentage > 50;
     const riskClass = isHighRisk ? 'risk-high' : 'risk-low';
+    const riskColor = isHighRisk ? '#dc3545' : '#28a745';
+    
+    // Establecer valores iniciales
+    percentageElement.textContent = '0.0';
     
     // Actualizar etiqueta de riesgo
     riskLabelElement.textContent = isHighRisk ? 'RIESGO ALTO' : 'RIESGO BAJO';
@@ -162,24 +167,43 @@ function displayResults(prediction) {
     messageIconElement.textContent = isHighRisk ? '🚨' : '✅';
     messageTextElement.textContent = prediction.risk_message;
     actionMessageElement.className = `action-message ${riskClass}`;
+    actionMessageElement.style.borderColor = riskColor;
     
-    // Actualizar gauge
-    gaugeFillElement.style.width = `${prediction.risk_percentage}%`;
-    
-    // Animar la aparición con un pequeño retraso
-    setTimeout(() => {
-        // Animar el porcentaje
-        animateValue(percentageElement, 0, prediction.risk_percentage, 1000);
-        
-        // Animar el gauge
-        gaugeFillElement.style.width = `${prediction.risk_percentage}%`;
-    }, 100);
+    // Actualizar detalles adicionales
+    riskProbabilityElement.textContent = prediction.risk_probability.toFixed(4);
+    evaluationDateElement.textContent = new Date().toLocaleString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    actionRequiredElement.textContent = prediction.action_required === 'immediate' ? 
+        'Inmediata' : 'Preventiva';
     
     // Mostrar sección de resultados
     resultsSection.style.display = 'block';
     
     // Scroll suave a los resultados
-    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+    
+    // Animar con retraso para efecto dramático
+    setTimeout(() => {
+        // 1. Animar el porcentaje numérico
+        animateValue(percentageElement, 0, prediction.risk_percentage, 1500);
+        
+        // 2. Animar el círculo SVG
+        animateCircle(progressRingCircle, prediction.risk_percentage, riskColor);
+        
+        // 3. Animar el marcador del gauge
+        animateGaugeMarker(gaugeMarkerElement, prediction.risk_percentage);
+        
+        // 4. Efecto de aparición para el mensaje
+        messageTextElement.style.animation = 'fadeIn 0.8s ease 0.5s both';
+        
+    }, 200);
 }
 
 /**
@@ -205,6 +229,28 @@ function animateValue(element, start, end, duration) {
 }
 
 /**
+ * Anima el círculo SVG de progreso
+ */
+function animateCircle(circleElement, percentage, color) {
+    const radius = 85;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (percentage / 100) * circumference;
+    
+    // Establecer el color
+    circleElement.style.stroke = color;
+    
+    // Animar el stroke-dashoffset
+    circleElement.style.strokeDashoffset = offset;
+}
+
+/**
+ * Anima el marcador del gauge
+ */
+function animateGaugeMarker(markerElement, percentage) {
+    markerElement.style.left = `${percentage}%`;
+}
+
+/**
  * Función de easing para animaciones
  */
 function easeOutQuad(t) {
@@ -212,25 +258,135 @@ function easeOutQuad(t) {
 }
 
 /**
- * Muestra el loader en el botón
+ * Muestra el loader en el botón y la barra de progreso
  */
 function showLoader() {
     const btnText = document.querySelector('.btn-text');
     const btnLoader = document.querySelector('.btn-loader');
+    const progressContainer = document.getElementById('progressContainer');
+    
     btnText.style.display = 'none';
     btnLoader.style.display = 'inline';
     form.querySelector('button[type="submit"]').disabled = true;
+    
+    // Mostrar barra de progreso
+    progressContainer.style.display = 'block';
+    
+    // Animar texto de progreso
+    animateProgressText();
 }
 
 /**
- * Oculta el loader en el botón
+ * Oculta el loader en el botón y la barra de progreso
  */
 function hideLoader() {
     const btnText = document.querySelector('.btn-text');
     const btnLoader = document.querySelector('.btn-loader');
+    const progressContainer = document.getElementById('progressContainer');
+    
     btnText.style.display = 'inline';
     btnLoader.style.display = 'none';
     form.querySelector('button[type="submit"]').disabled = false;
+    
+    // Ocultar barra de progreso
+    setTimeout(() => {
+        progressContainer.style.display = 'none';
+    }, 300);
+}
+
+/**
+ * Anima el texto de progreso con mensajes cambiantes
+ */
+function animateProgressText() {
+    const progressText = document.getElementById('progressText');
+    const messages = [
+        'Analizando datos del paciente...',
+        'Procesando información clínica...',
+        'Evaluando factores de riesgo...',
+        'Calculando probabilidad...',
+        'Generando recomendaciones...'
+    ];
+    
+    let index = 0;
+    const interval = setInterval(() => {
+        if (index < messages.length) {
+            progressText.textContent = messages[index];
+            index++;
+        } else {
+            clearInterval(interval);
+        }
+    }, 400);
+}
+
+/**
+ * Función para descargar resultados (simulada)
+ */
+function downloadResults() {
+    const riskPercentage = document.getElementById('riskPercentage').textContent;
+    const riskMessage = document.getElementById('messageText').textContent;
+    const evaluationDate = document.getElementById('evaluationDate').textContent;
+    
+    // Crear contenido del archivo
+    const content = `
+REPORTE DE EVALUACIÓN DE RIESGO DE CÁNCER DE HÍGADO
+====================================================
+
+Fecha de Evaluación: ${evaluationDate}
+
+RESULTADO:
+Porcentaje de Riesgo: ${riskPercentage}%
+
+RECOMENDACIÓN CLÍNICA:
+${riskMessage}
+
+AVISO LEGAL:
+Esta evaluación es solo para fines informativos y no reemplaza 
+el diagnóstico médico profesional. Consulte con un especialista.
+`;
+    
+    // Crear y descargar archivo
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `evaluacion_riesgo_cancer_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    // Mostrar notificación
+    showNotification('Reporte descargado exitosamente', 'success');
+}
+
+/**
+ * Muestra una notificación temporal
+ */
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${type === 'success' ? '#28a745' : '#0066cc'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
 }
 
 /**
