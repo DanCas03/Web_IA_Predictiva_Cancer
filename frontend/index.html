@@ -1,281 +1,280 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de predicción de riesgo de cáncer de hígado basado en IA">
-    <title>Predicción de Riesgo de Cáncer de Hígado - Sistema IA</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Preload para mejorar rendimiento -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Sistema de predicción de riesgo de cáncer de hígado basado en IA">
+	<title>Predicción de Riesgo de Cáncer de Hígado - Sistema IA</title>
+	<link rel="stylesheet" href="styles.css">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+	<!-- Preload para mejorar rendimiento -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="header-icon">🏥</div>
-                <h1>Sistema de Predicción de Riesgo de Cáncer de Hígado</h1>
-                <p class="subtitle">Evaluación Basada en Inteligencia Artificial y Deep Learning</p>
-                <div class="header-badges">
-                    <span class="badge">IA Avanzada</span>
-                    <span class="badge">Predicción en Tiempo Real</span>
-                    <span class="badge">Resultados Instantáneos</span>
-                </div>
-            </div>
-        </header>
+	<div class="container">
+		<header>
+			<div class="header-content">
+				<div class="header-icon">🏥</div>
+				<h1>Sistema de Predicción de Riesgo de Cáncer de Hígado</h1>
+				<p class="subtitle">Evaluación Basada en Inteligencia Artificial y Deep Learning</p>
+				<div class="header-badges">
+					<span class="badge">IA Avanzada</span>
+					<span class="badge">Predicción en Tiempo Real</span>
+					<span class="badge">Resultados Instantáneos</span>
+				</div>
+			</div>
+		</header>
 
-        <!-- Indicador de progreso -->
-        <div class="progress-container" id="progressContainer" style="display: none;">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <p class="progress-text" id="progressText">Analizando datos...</p>
-        </div>
+		<!-- Indicador de progreso -->
+		<div class="progress-container" id="progressContainer" style="display: none;">
+			<div class="progress-bar">
+				<div class="progress-fill" id="progressFill"></div>
+			</div>
+			<p class="progress-text" id="progressText">Analizando datos...</p>
+		</div>
 
-        <main>
-            <form id="predictionForm" class="prediction-form">
-                <div class="form-section">
-                    <h2>Información Demográfica</h2>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="age">Edad</label>
-                            <input type="number" id="age" name="age" min="0" max="120" required>
-                            <span class="form-help">Años (0-120)</span>
-                        </div>
+		<main>
+			<form id="predictionForm" class="prediction-form">
+				<div class="form-section">
+					<h2>Información Demográfica</h2>
+					
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="age">Edad</label>
+							<input type="number" id="age" name="age" min="0" max="120" required>
+							<span class="form-help">Años (0-120)</span>
+						</div>
 
-                        <div class="form-group">
-                            <label for="gender">Género</label>
-                            <select id="gender" name="gender" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Male">Masculino</option>
-                                <option value="Female">Femenino</option>
-                            </select>
-                        </div>
+						<div class="form-group">
+							<label for="gender">Género</label>
+							<select id="gender" name="gender" required>
+								<option value="">Seleccionar...</option>
+								<option value="Male">Masculino</option>
+								<option value="Female">Femenino</option>
+							</select>
+						</div>
 
-                        <div class="form-group">
-                            <label for="bmi">IMC (Índice de Masa Corporal)</label>
-                            <input type="number" id="bmi" name="bmi" min="10" max="60" step="0.1" required>
-                            <span class="form-help">kg/m² (10-60)</span>
-                        </div>
-                    </div>
-                </div>
+						<div class="form-group">
+							<label for="bmi">IMC (Índice de Masa Corporal)</label>
+							<input type="number" id="bmi" name="bmi" min="0" max="60" step="0.1" required>
+							<span class="form-help">kg/m² (10-60)</span>
+						</div>
+					</div>
+				</div>
 
-                <div class="form-section">
-                    <h2>Estilo de Vida</h2>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="alcohol_consumption">Consumo de Alcohol</label>
-                            <select id="alcohol_consumption" name="alcohol_consumption" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Never">Nunca</option>
-                                <option value="Occasional">Ocasional</option>
-                                <option value="Regular">Regular</option>
-                            </select>
-                        </div>
+				<div class="form-section">
+					<h2>Estilo de Vida</h2>
+					
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="alcohol_consumption">Consumo de Alcohol</label>
+							<select id="alcohol_consumption" name="alcohol_consumption" required>
+								<option value="">Seleccionar...</option>
+								<option value="Never">Nunca</option>
+								<option value="Occasional">Ocasional</option>
+								<option value="Regular">Regular</option>
+							</select>
+						</div>
 
-                        <div class="form-group">
-                            <label for="smoking_status">Estado de Fumador</label>
-                            <select id="smoking_status" name="smoking_status" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Never">Nunca</option>
-                                <option value="Former">Ex-fumador</option>
-                                <option value="Current">Fumador actual</option>
-                            </select>
-                        </div>
+						<div class="form-group">
+							<label for="smoking_status">Estado de Fumador</label>
+							<select id="smoking_status" name="smoking_status" required>
+								<option value="">Seleccionar...</option>
+								<option value="Never">Nunca</option>
+								<option value="Former">Ex-fumador</option>
+								<option value="Current">Fumador actual</option>
+							</select>
+						</div>
 
-                        <div class="form-group">
-                            <label for="physical_activity_level">Nivel de Actividad Física</label>
-                            <select id="physical_activity_level" name="physical_activity_level" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Low">Bajo</option>
-                                <option value="Moderate">Moderado</option>
-                                <option value="High">Alto</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+						<div class="form-group">
+							<label for="physical_activity_level">Nivel de Actividad Física</label>
+							<select id="physical_activity_level" name="physical_activity_level" required>
+								<option value="">Seleccionar...</option>
+								<option value="Low">Bajo</option>
+								<option value="Moderate">Moderado</option>
+								<option value="High">Alto</option>
+							</select>
+						</div>
+					</div>
+				</div>
 
-                <div class="form-section">
-                    <h2>Indicadores Clínicos</h2>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="liver_function_score">Puntuación de Función Hepática</label>
-                            <input type="number" id="liver_function_score" name="liver_function_score" 
-                                   min="0" max="100" step="0.1" required>
-                            <span class="form-help">0-100 puntos</span>
-                        </div>
+				<div class="form-section">
+					<h2>Indicadores Clínicos</h2>
+					
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="liver_function_score">Puntuación de Función Hepática</label>
+							<input type="number" id="liver_function_score" name="liver_function_score" 
+								   min="0" max="100" step="0.1" required>
+							<span class="form-help">0-100 puntos</span>
+						</div>
 
-                        <div class="form-group">
-                            <label for="alpha_fetoprotein_level">Nivel de Alfa-fetoproteína</label>
-                            <input type="number" id="alpha_fetoprotein_level" name="alpha_fetoprotein_level" 
-                                   min="0" max="1000" step="0.01" required>
-                            <span class="form-help">ng/mL (0-1000)</span>
-                        </div>
-                    </div>
-                </div>
+						<div class="form-group">
+							<label for="alpha_fetoprotein_level">Nivel de Alfa-fetoproteína</label>
+							<input type="number" id="alpha_fetoprotein_level" name="alpha_fetoprotein_level" 
+								   min="0" max="1000" step="0.01" required>
+							<span class="form-help">ng/mL (0-1000)</span>
+						</div>
+					</div>
+				</div>
 
-                <div class="form-section">
-                    <h2>Condiciones Médicas</h2>
-                    
-                    <div class="checkbox-grid">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="hepatitis_b" name="hepatitis_b" value="1">
-                            <label for="hepatitis_b">Hepatitis B</label>
-                        </div>
+				<div class="form-section">
+					<h2>Condiciones Médicas</h2>
+					
+					<div class="checkbox-grid">
+						<div class="checkbox-group">
+							<input type="checkbox" id="hepatitis_b" name="hepatitis_b" value="1">
+							<label for="hepatitis_b">Hepatitis B</label>
+						</div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="hepatitis_c" name="hepatitis_c" value="1">
-                            <label for="hepatitis_c">Hepatitis C</label>
-                        </div>
+						<div class="checkbox-group">
+							<input type="checkbox" id="hepatitis_c" name="hepatitis_c" value="1">
+							<label for="hepatitis_c">Hepatitis C</label>
+						</div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="cirrhosis_history" name="cirrhosis_history" value="1">
-                            <label for="cirrhosis_history">Historial de Cirrosis</label>
-                        </div>
+						<div class="checkbox-group">
+							<input type="checkbox" id="cirrhosis_history" name="cirrhosis_history" value="1">
+							<label for="cirrhosis_history">Historial de Cirrosis</label>
+						</div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="family_history_cancer" name="family_history_cancer" value="1">
-                            <label for="family_history_cancer">Historial Familiar de Cáncer</label>
-                        </div>
+						<div class="checkbox-group">
+							<input type="checkbox" id="family_history_cancer" name="family_history_cancer" value="1">
+							<label for="family_history_cancer">Historial Familiar de Cáncer</label>
+						</div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="diabetes" name="diabetes" value="1">
-                            <label for="diabetes">Diabetes</label>
-                        </div>
-                    </div>
-                </div>
+						<div class="checkbox-group">
+							<input type="checkbox" id="diabetes" name="diabetes" value="1">
+							<label for="diabetes">Diabetes</label>
+						</div>
+					</div>
+				</div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary">
-                        <span class="btn-text">Evaluar Riesgo</span>
-                        <span class="btn-loader" style="display: none;">⏳ Procesando...</span>
-                    </button>
-                    <button type="reset" class="btn-secondary">Limpiar Formulario</button>
-                </div>
-            </form>
+				<div class="form-actions">
+					<button type="submit" class="btn-primary">
+						<span class="btn-text">Evaluar Riesgo</span>
+						<span class="btn-loader" style="display: none;">⏳ Procesando...</span>
+					</button>
+					<button type="reset" class="btn-secondary">Limpiar Formulario</button>
+				</div>
+			</form>
 
-            <!-- Sección de Resultados (inicialmente oculta) -->
-            <div id="resultsSection" class="results-section" style="display: none;">
-                <div class="results-card">
-                    <div class="results-header">
-                        <span class="results-icon">📊</span>
-                        <h2>Resultado de la Evaluación</h2>
-                    </div>
-                    
-                    <!-- Indicador principal de riesgo -->
-                    <div class="risk-indicator" id="riskIndicator">
-                        <div class="risk-circle">
-                            <svg class="progress-ring" width="200" height="200">
-                                <circle class="progress-ring-circle-bg" 
-                                        stroke="#e0e0e0" 
-                                        stroke-width="15" 
-                                        fill="transparent" 
-                                        r="85" 
-                                        cx="100" 
-                                        cy="100"/>
-                                <circle id="progressRingCircle" 
-                                        class="progress-ring-circle" 
-                                        stroke-width="15" 
-                                        fill="transparent" 
-                                        r="85" 
-                                        cx="100" 
-                                        cy="100"/>
-                            </svg>
-                            <div class="risk-percentage-overlay">
-                                <span class="percentage-value" id="riskPercentage">--</span>
-                                <span class="percentage-symbol">%</span>
-                            </div>
-                        </div>
-                        <div class="risk-label-container">
-                            <div class="risk-label" id="riskLabel">--</div>
-                            <div class="risk-sublabel">Nivel de Riesgo</div>
-                        </div>
-                    </div>
+			<!-- Sección de Resultados (inicialmente oculta) -->
+			<div id="resultsSection" class="results-section" style="display: none;">
+				<div class="results-card">
+					<div class="results-header">
+						<span class="results-icon">📊</span>
+						<h2>Resultado de la Evaluación</h2>
+					</div>
+					
+					<!-- Indicador principal de riesgo -->
+					<div class="risk-indicator" id="riskIndicator">
+						<div class="risk-circle">
+							<svg class="progress-ring" width="200" height="200">
+								<circle class="progress-ring-circle-bg" 
+										stroke="#e0e0e0" 
+										stroke-width="15" 
+										fill="transparent" 
+										r="85" 
+										cx="100" 
+										cy="100"/>
+								<circle id="progressRingCircle" 
+										class="progress-ring-circle" 
+										stroke-width="15" 
+										fill="transparent" 
+										r="85" 
+										cx="100" 
+										cy="100"/>
+							</svg>
+							<div class="risk-percentage-overlay">
+								<span class="percentage-value" id="riskPercentage">--</span>
+								<span class="percentage-symbol">%</span>
+							</div>
+						</div>
+						<div class="risk-label-container">
+							<div class="risk-label" id="riskLabel">--</div>
+							<div class="risk-sublabel">Nivel de Riesgo</div>
+						</div>
+					</div>
 
-                    <!-- Barra de gauge mejorada -->
-                    <div class="risk-gauge">
-                        <div class="gauge-title">Escala de Riesgo</div>
-                        <div class="gauge-bar">
-                            <div class="gauge-marker" id="gaugeMarker"></div>
-                        </div>
-                        <div class="gauge-labels">
-                            <div class="gauge-label-item">
-                                <span class="gauge-dot" style="background: var(--success-color);"></span>
-                                <span>Bajo (0-50%)</span>
-                            </div>
-                            <div class="gauge-label-item">
-                                <span class="gauge-dot" style="background: var(--danger-color);"></span>
-                                <span>Alto (51-100%)</span>
-                            </div>
-                        </div>
-                    </div>
+					<!-- Barra de gauge mejorada -->
+					<div class="risk-gauge">
+						<div class="gauge-title">Escala de Riesgo</div>
+						<div class="gauge-bar">
+							<div class="gauge-marker" id="gaugeMarker"></div>
+						</div>
+						<div class="gauge-labels">
+							<div class="gauge-label-item">
+								<span class="gauge-dot" style="background: var(--success-color);"></span>
+								<span>Bajo (0-50%)</span>
+							</div>
+							<div class="gauge-label-item">
+								<span class="gauge-dot" style="background: var(--danger-color);"></span>
+								<span>Alto (51-100%)</span>
+							</div>
+						</div>
+					</div>
 
-                    <!-- Mensaje de acción destacado -->
-                    <div class="action-message" id="actionMessage">
-                        <div class="message-header">
-                            <div class="message-icon" id="messageIcon"></div>
-                            <h3>Recomendación Clínica</h3>
-                        </div>
-                        <div class="message-text" id="messageText"></div>
-                    </div>
+					<!-- Mensaje de acción destacado -->
+					<div class="action-message" id="actionMessage">
+						<div class="message-header">
+							<div class="message-icon" id="messageIcon"></div>
+							<h3>Recomendación Clínica</h3>
+						</div>
+						<div class="message-text" id="messageText"></div>
+					</div>
 
-                    <!-- Detalles adicionales -->
-                    <div class="results-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Probabilidad:</span>
-                            <span class="detail-value" id="riskProbability">--</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Fecha de Evaluación:</span>
-                            <span class="detail-value" id="evaluationDate">--</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Acción Requerida:</span>
-                            <span class="detail-value" id="actionRequired">--</span>
-                        </div>
-                    </div>
+					<!-- Detalles adicionales -->
+					<div class="results-details">
+						<div class="detail-item">
+							<span class="detail-label">Probabilidad:</span>
+							<span class="detail-value" id="riskProbability">--</span>
+						</div>
+						<div class="detail-item">
+							<span class="detail-label">Fecha de Evaluación:</span>
+							<span class="detail-value" id="evaluationDate">--</span>
+						</div>
+						<div class="detail-item">
+							<span class="detail-label">Acción Requerida:</span>
+							<span class="detail-value" id="actionRequired">--</span>
+						</div>
+					</div>
 
-                    <div class="results-actions">
-                        <button onclick="window.print()" class="btn-secondary">
-                            <span>📄</span>
-                            Imprimir Resultado
-                        </button>
-                        <button onclick="downloadResults()" class="btn-secondary">
-                            <span>💾</span>
-                            Guardar PDF
-                        </button>
-                        <button onclick="resetForm()" class="btn-primary">
-                            <span>🔄</span>
-                            Nueva Evaluación
-                        </button>
-                    </div>
-                </div>
-            </div>
+					<div class="results-actions">
+						<button onclick="window.print()" class="btn-secondary">
+							<span>📄</span>
+							Imprimir Resultado
+						</button>
+						<button onclick="downloadResults()" class="btn-secondary">
+							<span>💾</span>
+							Guardar PDF
+						</button>
+						<button onclick="resetForm()" class="btn-primary">
+							<span>🔄</span>
+							Nueva Evaluación
+						</button>
+					</div>
+				</div>
+			</div>
 
-            <!-- Mensajes de Error -->
-            <div id="errorMessage" class="error-message" style="display: none;">
-                <div class="error-content">
-                    <span class="error-icon">⚠️</span>
-                    <span id="errorText"></span>
-                </div>
-            </div>
-        </main>
+			<!-- Mensajes de Error -->
+			<div id="errorMessage" class="error-message" style="display: none;">
+				<div class="error-content">
+					<span class="error-icon">⚠️</span>
+					<span id="errorText"></span>
+				</div>
+			</div>
+		</main>
 
-        <footer>
-            <p class="disclaimer">
-                <strong>Aviso Importante:</strong> Esta herramienta es solo para fines de evaluación preliminar 
-                y no reemplaza el diagnóstico médico profesional. Siempre consulte con un médico especialista 
-                para obtener un diagnóstico definitivo.
-            </p>
-            <p class="copyright">© 2024 Sistema de Predicción de Cáncer - Desarrollado con IA</p>
-        </footer>
-    </div>
+		<footer>
+			<p class="disclaimer">
+				<strong>Aviso Importante:</strong> Esta herramienta es solo para fines de evaluación preliminar 
+				y no reemplaza el diagnóstico médico profesional. Siempre consulte con un médico especialista 
+				para obtener un diagnóstico definitivo.
+			</p>
+		</footer>
+	</div>
 
-    <script src="script.js"></script>
+	<script src="script.js"></script>
 </body>
 </html>
