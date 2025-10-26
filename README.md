@@ -347,6 +347,73 @@ Métricas típicas esperadas:
 - Verificar que todos los campos del formulario estén completos
 - Revisar los rangos válidos para cada campo
 
+## 💻 Inicio Rápido (5 Pasos)
+
+1. **Exportar datos:**
+   ```bash
+   python export_data.py
+   ```
+
+2. **Entrenar modelo (15-30 min):**
+   ```bash
+   cd model
+   python train_model.py
+   ```
+
+3. **Iniciar backend:**
+   ```bash
+   cd backend
+   python app.py
+   ```
+
+4. **Abrir aplicación:**
+   - Abrir `frontend/index.html` en el navegador
+
+5. **Probar API:**
+   ```bash
+   python test_api.py
+   ```
+
+## 📝 Organización de Commits (Para Repositorio Git)
+
+Para mostrar participación completa en las 4 fases del taller, haz commits organizados:
+
+```bash
+# Inicializar Git si no está
+git init
+
+# Commit 1: Setup y documentación
+git add .gitignore setup.py requirements.txt README.md
+git commit -m "docs: Initial project setup and documentation"
+
+# Commit 2: Datos y preprocesamiento
+git add export_data.py data/*.csv
+git commit -m "feat: Add data export and preprocessing functionality"
+
+# Commit 3: Modelo Deep Learning
+git add model/train_model.py model/requirements.txt backend/saved_models/.gitkeep
+git commit -m "feat: Implement Deep Learning model training with Keras Tuner"
+
+# Commit 4: Backend API
+git add backend/app.py backend/requirements.txt
+git commit -m "feat: Implement Flask REST API with clinical risk prediction"
+
+# Commit 5: Frontend Web App
+git add frontend/
+git commit -m "feat: Create modern web interface with animated visualizations"
+
+# Commit 6: Testing
+git add test_api.py
+git commit -m "test: Add comprehensive API testing suite"
+
+# Commit 7: Model entrenado (después de ejecutar train_model.py)
+git add backend/saved_models/*.h5 backend/saved_models/*.pkl backend/saved_models/*.json
+git add model/*.png
+git commit -m "feat: Add trained model with metrics and visualizations"
+```
+
+Ver historial: `git log --oneline --graph`
+
 ## 🤝 Contribuciones
 
 Las contribuciones son bienvenidas. Por favor:
