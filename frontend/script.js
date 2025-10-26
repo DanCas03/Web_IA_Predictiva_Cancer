@@ -236,11 +236,13 @@ function animateCircle(circleElement, percentage, color) {
 	const circumference = 2 * Math.PI * radius;
 	const offset = circumference - (percentage / 100) * circumference;
 	
-	// Establecer el color
+	// Configurar el círculo correctamente
+	circleElement.setAttribute('stroke-dasharray', circumference);
 	circleElement.style.stroke = color;
 	
 	// Animar el stroke-dashoffset
 	circleElement.style.strokeDashoffset = offset;
+	circleElement.style.transition = 'stroke-dashoffset 1.5s ease-in-out, stroke 0.5s ease';
 }
 
 /**
