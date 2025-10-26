@@ -276,9 +276,9 @@ def main():
 	Función principal de entrenamiento con Keras Tuner
 	"""
 	# Configuración
-	DATA_PATH = '../data/liver_cancer_data.csv'
-	MODEL_DIR = '../backend/saved_models'
-	TUNER_DIR = 'model/tuner_results'
+	DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'liver_cancer_data.csv')
+	MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'backend', 'saved_models')
+	TUNER_DIR = os.path.join(os.path.dirname(__file__), 'tuner_results')
 	
 	# Crear directorios si no existen
 	os.makedirs(MODEL_DIR, exist_ok=True)
