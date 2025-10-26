@@ -1,0 +1,18 @@
+# Requirements principales del proyecto completo
+# 
+# Para entrenar el modelo:
+#   cd model && pip install -r requirements.txt
+#
+# Para el backend:
+#   cd backend && pip install -r requirements.txt
+
+# Dependencias compartidas del proyecto
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+requests>=2.31.0
+
+# Para desarrollo y testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
