@@ -38,16 +38,17 @@ ENV/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Data files (opcional - descomenta si no quieres subir los datos)
-# data/
-# *.csv
-# *.sql
+# Data files (mantener CSVs pequeños en git, ignorar datos grandes)
+data/*.pkl
+data/limpiezaDeDatos.ipynb
 
-# Model artifacts (opcional - descomenta si no quieres subir los modelos entrenados)
-# backend/saved_models/
-# *.h5
-# *.pkl
-# *.json
+# Model artifacts - NO ignorar los archivos de modelo generados
+# backend/saved_models/*.h5
+# backend/saved_models/*.pkl
+# backend/saved_models/*.json
+
+# Tuner results (muy grandes, mejor no subir)
+model/tuner_results/
 
 # Logs
 *.log

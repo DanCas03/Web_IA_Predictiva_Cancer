@@ -1,0 +1,3 @@
+# Este archivo asegura que Git trackee el directorio saved_models
+# Los archivos del modelo entrenado se guardarán aquí después de ejecutar train_model.py
+
