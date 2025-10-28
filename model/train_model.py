@@ -20,8 +20,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Configurar semilla para reproducibilidad
-np.random.seed(42)
-tf.random.set_seed(42)
+seed = 42
+np.random.seed(seed)
+tf.random.set_seed(seed)
 
 def load_and_preprocess_data(csv_path):
 	"""
@@ -214,6 +215,7 @@ def run_hyperparameter_search(X_train_scaled, y_train, input_dim, tuner_dir):
 		objective=kt.Objective('val_auc', direction='max'),
 		max_epochs=50,
 		factor=3,
+		seed=seed,
 		directory=tuner_dir,
 		project_name='liver_cancer_tuning',
 		overwrite=True
@@ -292,7 +294,7 @@ def main():
 	
 	# 2. División train/test
 	X_train, X_test, y_train, y_test = train_test_split(
-		X, y, test_size=0.2, random_state=42, stratify=y
+		X, y, test_size=0.2, random_state=seed, stratify=y
 	)
 	
 	print(f"\nTamaño del conjunto de entrenamiento: {X_train.shape}")
@@ -416,7 +418,7 @@ def main():
 	print("\n" + "="*60)
 	print("¡ENTRENAMIENTO COMPLETADO EXITOSAMENTE!")
 	print("="*60)
-	print(f"\nResumen de resultados:")
+	print("\nResumen de resultados:")
 	print(f"  • Test Accuracy: {metadata['model_performance']['test_accuracy']:.4f}")
 	print(f"  • Test AUC: {metadata['model_performance']['test_auc']:.4f}")
 	print(f"  • Arquitectura: {best_hps.get('num_layers')+1} capas ocultas")
