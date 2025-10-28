@@ -33,19 +33,19 @@ def load_model_artifacts():
 		# Cargar modelo Keras
 		model_path = 'saved_models/liver_cancer_model.h5'
 		model = tf.keras.models.load_model(model_path)
-		print(f"✓ Modelo cargado desde: {model_path}")
+		print(f"Modelo cargado desde: {model_path}")
 		
 		# Cargar scaler
 		scaler_path = 'saved_models/scaler.pkl'
 		with open(scaler_path, 'rb') as f:
 			scaler = pickle.load(f)
-		print(f"✓ Scaler cargado desde: {scaler_path}")
+		print(f"Scaler cargado desde: {scaler_path}")
 		
 		# Cargar metadata
 		metadata_path = 'saved_models/feature_metadata.json'
 		with open(metadata_path, 'r') as f:
 			feature_metadata = json.load(f)
-		print(f"✓ Metadata cargada desde: {metadata_path}")
+		print(f"Metadata cargada desde: {metadata_path}")
 		
 		# Reconstruir encoders
 		encoders = {}
@@ -55,11 +55,11 @@ def load_model_artifacts():
 			le.classes_ = np.array(classes)
 			encoders[col] = le
 		
-		print("✓ Todos los artefactos del modelo cargados exitosamente")
+		print("Todos los artefactos del modelo cargados exitosamente")
 		return True
 		
 	except Exception as e:
-		print(f"✗ Error cargando artefactos del modelo: {e}")
+		print(f"Error cargando artefactos del modelo: {e}")
 		return False
 
 def validate_input_data(data):
@@ -279,9 +279,9 @@ if __name__ == '__main__':
 	
 	# Cargar artefactos del modelo al iniciar
 	if load_model_artifacts():
-		print("\n✓ API lista para recibir solicitudes")
-		print("→ Ejecutando en http://localhost:5000")
+		print("\nAPI lista para recibir solicitudes")
+		print("Ejecutando en http://localhost:5000")
 		app.run(debug=True, host='0.0.0.0', port=5000)
 	else:
-		print("\n✗ Error: No se pudieron cargar los artefactos del modelo")
+		print("\nError: No se pudieron cargar los artefactos del modelo")
 		print("Asegúrate de entrenar el modelo primero ejecutando: python ../model/train_model.py")

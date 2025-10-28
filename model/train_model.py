@@ -266,7 +266,6 @@ def run_hyperparameter_search(X_train_scaled, y_train, input_dim, tuner_dir):
 		print(f"Dropout {i+2}: {best_hps.get(f'dropout_{i+2}')}")
 	
 	print(f"Learning rate: {best_hps.get('learning_rate')}")
-	print(f"Optimizador: {best_hps.get('optimizer')}")
 	print("="*60)
 	
 	return best_hps, tuner
@@ -276,7 +275,7 @@ def main():
 	Función principal de entrenamiento con Keras Tuner
 	"""
 	# Configuración
-	DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'liver_cancer_data.csv')
+	DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'liver_cancer_data_clean.csv')
 	MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'backend', 'saved_models')
 	TUNER_DIR = os.path.join(os.path.dirname(__file__), 'tuner_results')
 	
@@ -369,12 +368,12 @@ def main():
 	
 	# Guardar modelo final
 	best_model.save(os.path.join(MODEL_DIR, 'liver_cancer_model.h5'))
-	print(f"✓ Modelo guardado en: {MODEL_DIR}/liver_cancer_model.h5")
+	print(f"Modelo guardado en: {MODEL_DIR}/liver_cancer_model.h5")
 	
 	# Guardar scaler
 	with open(os.path.join(MODEL_DIR, 'scaler.pkl'), 'wb') as f:
 		pickle.dump(scaler, f)
-	print(f"✓ Scaler guardado en: {MODEL_DIR}/scaler.pkl")
+	print(f"Scaler guardado en: {MODEL_DIR}/scaler.pkl")
 	
 	# Guardar mejores hiperparámetros
 	best_hyperparameters = {
@@ -382,8 +381,7 @@ def main():
 		'activation_layer_1': best_hps.get('activation_layer_1'),
 		'dropout_1': best_hps.get('dropout_1'),
 		'num_layers': best_hps.get('num_layers'),
-		'learning_rate': best_hps.get('learning_rate'),
-		'optimizer': best_hps.get('optimizer')
+		'learning_rate': best_hps.get('learning_rate')
 	}
 	
 	# Agregar hiperparámetros de capas adicionales
@@ -394,7 +392,7 @@ def main():
 	
 	with open(os.path.join(MODEL_DIR, 'best_hyperparameters.json'), 'w') as f:
 		json.dump(best_hyperparameters, f, indent=2)
-	print(f"✓ Mejores hiperparámetros guardados en: {MODEL_DIR}/best_hyperparameters.json")
+	print(f"Mejores hiperparámetros guardados en: {MODEL_DIR}/best_hyperparameters.json")
 	
 	# Guardar metadata completa
 	test_metrics = best_model.evaluate(X_test_scaled, y_test, verbose=0)
@@ -413,7 +411,7 @@ def main():
 	
 	with open(os.path.join(MODEL_DIR, 'feature_metadata.json'), 'w') as f:
 		json.dump(metadata, f, indent=2)
-	print(f"✓ Metadata completa guardada en: {MODEL_DIR}/feature_metadata.json")
+	print(f"Metadata completa guardada en: {MODEL_DIR}/feature_metadata.json")
 	
 	print("\n" + "="*60)
 	print("¡ENTRENAMIENTO COMPLETADO EXITOSAMENTE!")
@@ -422,7 +420,6 @@ def main():
 	print(f"  • Test Accuracy: {metadata['model_performance']['test_accuracy']:.4f}")
 	print(f"  • Test AUC: {metadata['model_performance']['test_auc']:.4f}")
 	print(f"  • Arquitectura: {best_hps.get('num_layers')+1} capas ocultas")
-	print(f"  • Optimizador: {best_hps.get('optimizer')}")
 	print("="*60)
 
 if __name__ == "__main__":
