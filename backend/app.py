@@ -3,7 +3,7 @@ API REST Flask para predicción de riesgo de cáncer de hígado
 Sirve el modelo entrenado y maneja las solicitudes de predicción
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import numpy as np
 import pandas as pd
@@ -22,6 +22,9 @@ model = None
 scaler = None
 feature_metadata = None
 encoders = None
+
+# Ruta absoluta a la carpeta del frontend (../frontend respecto a este archivo)
+FRONTEND_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
 
 def load_model_artifacts():
 	"""
@@ -132,21 +135,44 @@ def preprocess_input(data):
 	
 	return df_scaled
 
-@app.route('/', methods=['GET'])
-def home():
+@app.route('/openapi', methods=['GET'])
+def openapi_info():
 	"""
-	Endpoint raíz - información básica de la API
+	Información básica de la API (OpenAPI-like)
 	"""
 	return jsonify({
 		'api': 'Liver Cancer Risk Prediction API',
 		'version': '1.0',
 		'endpoints': {
-			'/': 'API information',
+			'/openapi': 'API information',
 			'/health': 'Health check',
-			'/predict': 'POST - Predict cancer risk'
+			'/predict': 'POST - Predict cancer risk',
+			'/features': 'GET - Features and encoders info',
+			'/': 'Serve frontend UI (index.html)'
 		},
-		'model_performance': feature_metadata.get('model_performance', {})
+		'model_performance': feature_metadata.get('model_performance', {}) if feature_metadata else {}
 	})
+
+@app.route('/', methods=['GET'])
+def serve_root_ui():
+	"""
+	Sirve la UI del frontend en la raíz
+	"""
+	return send_from_directory(FRONTEND_FOLDER, 'index.html')
+
+@app.route('/ui')
+def serve_ui():
+    """
+    Sirve la aplicación web (index.html) del frontend
+    """
+    return send_from_directory(FRONTEND_FOLDER, 'index.html')
+
+@app.route('/ui/<path:filename>')
+def serve_ui_assets(filename):
+    """
+    Sirve los assets estáticos (JS, CSS, imágenes) del frontend
+    """
+    return send_from_directory(FRONTEND_FOLDER, filename)
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -248,6 +274,11 @@ def get_features():
 			'binary': ['hepatitis_b', 'hepatitis_c', 'cirrhosis_history', 'family_history_cancer', 'diabetes']
 		}
 	})
+
+# Ruta catch-all para servir assets del frontend desde la raíz (styles.css, script.js, imágenes)
+@app.route('/<path:filename>')
+def serve_root_assets(filename):
+	return send_from_directory(FRONTEND_FOLDER, filename)
 
 @app.errorhandler(404)
 def not_found(error):
