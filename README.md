@@ -15,7 +15,7 @@ Este sistema utiliza una Red Neuronal Multicapa (MLP) para predecir la probabili
 ### Modelo y Predicción
 - ✅ Red Neuronal Multicapa (MLP) con TensorFlow/Keras
 - ✅ Predicción de riesgo en tiempo real (0-100%)
-- ✅ Precisión del modelo: ~85-90%
+- ✅ Precisión del modelo: ~85-90% (deberia)
 - ✅ 13 características clínicas analizadas
 
 ### Frontend Avanzado
@@ -64,7 +64,7 @@ proyecto/
 │   ├── app.py                          # Aplicación Flask
 │   ├── requirements.txt                # Dependencias del backend
 │   └── saved_models/                   # Modelos guardados
-│       ├── liver_cancer_model.h5       # Modelo entrenado
+│       ├── liver_cancer_model.keras    # Modelo entrenado
 │       ├── scaler.pkl                  # Escalador
 │       └── feature_metadata.json       # Metadata de features
 │
@@ -114,8 +114,11 @@ source venv/bin/activate
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Entrenar el modelo
+# Entrenar el modelo (búsqueda completa de hiperparámetros)
 python train_model.py
+
+# O entrenar usando hiperparámetros guardados (mucho más rápido)
+python train_model.py --skip-tuning
 
 # Volver al directorio principal
 cd ..
@@ -328,6 +331,43 @@ Métricas típicas esperadas:
 - Accuracy: ~85-90%
 - AUC: ~0.88-0.92
 
+## 🆕 Características Avanzadas y Cambios Recientes
+
+### ⚡ Modo de Entrenamiento Rápido (`--skip-tuning`)
+
+El script de entrenamiento ahora incluye una opción para **saltar la búsqueda de hiperparámetros** y usar configuraciones previamente guardadas:
+
+```bash
+python train_model.py --skip-tuning
+```
+
+**Ventajas:**
+- ⏱️ **Tiempo reducido**: De 15-30 minutos a ~5 minutos
+- 🔄 **Útil para reentrenamiento**: Cuando actualizas los datos pero quieres mantener la arquitectura
+- 💾 **Usa configuración óptima**: Carga los mejores hiperparámetros del archivo `best_hyperparameters.json`
+
+**Cómo funciona:**
+1. En el **primer entrenamiento**, Keras Tuner busca los mejores hiperparámetros (lento)
+2. Los hiperparámetros se guardan en `backend/saved_models/best_hyperparameters.json`
+3. En **entrenamientos posteriores** con `--skip-tuning`:
+   - Se cargan los hiperparámetros guardados
+   - Se construye directamente el modelo óptimo
+   - Solo se ejecuta el entrenamiento (sin búsqueda)
+
+**Ejemplo de hiperparámetros guardados:**
+```json
+{
+  "units_layer_1": 192,
+  "activation_layer_1": "relu",
+  "dropout_1": 0.2,
+  "num_layers": 2,
+  "learning_rate": 0.002254,
+  "units_layer_2": 48,
+  "activation_layer_2": "tanh",
+  "dropout_2": 0.2
+}
+```
+
 
 ## 🐛 Solución de Problemas
 
@@ -339,10 +379,22 @@ Métricas típicas esperadas:
 ### Error: "Modelo no encontrado"
 - Asegurarse de haber ejecutado `train_model.py` primero
 - Verificar que los archivos estén en `backend/saved_models/`
+- Buscar el archivo `liver_cancer_model.keras` (formato nuevo, no `.h5`)
+- Si tienes un modelo antiguo `.h5`, debes reentrenar con el nuevo script
 
 ### Error: "Datos inválidos"
 - Verificar que todos los campos del formulario estén completos
 - Revisar los rangos válidos para cada campo
+
+### Advertencia: "--skip-tuning especificado pero no se encontraron hiperparámetros"
+- Esto significa que intentaste usar `--skip-tuning` sin haber entrenado antes
+- **Solución**: Ejecuta primero sin la bandera: `python train_model.py`
+- Después podrás usar `--skip-tuning` en entrenamientos futuros
+
+### El modelo tarda mucho en entrenar
+- **Primera vez**: Es normal (15-30 min) porque busca hiperparámetros
+- **Solución**: Usa `--skip-tuning` en entrenamientos posteriores para reducir a ~5 min
+- Asegúrate de tener los archivos en `backend/saved_models/best_hyperparameters.json`
 
 ## 💻 Inicio Rápido (5 Pasos)
 
@@ -351,10 +403,14 @@ Métricas típicas esperadas:
    python export_data.py
    ```
 
-2. **Entrenar modelo (15-30 min):**
+2. **Entrenar modelo:**
    ```bash
    cd model
+   # Primera vez (15-30 min con búsqueda de hiperparámetros)
    python train_model.py
+   
+   # Entrenamientos posteriores (más rápido, ~5 min)
+   python train_model.py --skip-tuning
    ```
 
 3. **Iniciar backend:**

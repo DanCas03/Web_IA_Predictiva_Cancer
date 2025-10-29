@@ -8,6 +8,7 @@ import numpy as np
 import json
 import os
 import pickle
+import argparse
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
@@ -96,6 +97,51 @@ def build_model(hp, input_dim):
 	# Optimizador tunable
 	learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
 	opt = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+	
+	# Compilar modelo
+	model.compile(
+		optimizer=opt,
+		loss='binary_crossentropy',
+		metrics=['accuracy', tf.keras.metrics.AUC(name='auc')]
+	)
+	
+	return model
+
+def build_model_from_hyperparameters(hyperparameters, input_dim):
+	"""
+	Construye un modelo usando hiperparámetros específicos (sin Keras Tuner)
+	
+	Args:
+		hyperparameters: Diccionario con hiperparámetros
+		input_dim: Dimensión de entrada
+	
+	Returns:
+		model: Modelo de Keras compilado
+	"""
+	model = Sequential()
+	
+	# Primera capa
+	model.add(Dense(
+		units=hyperparameters['units_layer_1'],
+		activation=hyperparameters['activation_layer_1'],
+		input_dim=input_dim
+	))
+	model.add(Dropout(hyperparameters['dropout_1']))
+	
+	# Capas ocultas adicionales
+	num_layers = hyperparameters['num_layers']
+	for i in range(num_layers):
+		model.add(Dense(
+			units=hyperparameters[f'units_layer_{i+2}'],
+			activation=hyperparameters[f'activation_layer_{i+2}']
+		))
+		model.add(Dropout(hyperparameters[f'dropout_{i+2}']))
+	
+	# Capa de salida
+	model.add(Dense(1, activation='sigmoid'))
+	
+	# Optimizador con learning rate específico
+	opt = tf.keras.optimizers.Adam(learning_rate=hyperparameters['learning_rate'])
 	
 	# Compilar modelo
 	model.compile(
@@ -270,14 +316,18 @@ def run_hyperparameter_search(X_train_scaled, y_train, input_dim, tuner_dir):
 	
 	return best_hps, tuner
 
-def main():
+def main(skip_tuning=False):
 	"""
 	Función principal de entrenamiento con Keras Tuner
+	
+	Args:
+		skip_tuning: Si es True, carga hiperparámetros previos en lugar de ejecutar búsqueda
 	"""
 	# Configuración
 	DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'liver_cancer_data_clean.csv')
 	MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'backend', 'saved_models')
 	TUNER_DIR = os.path.join(os.path.dirname(__file__), 'tuner_results')
+	HYPERPARAMS_PATH = os.path.join(MODEL_DIR, 'best_hyperparameters.json')
 	
 	# Crear directorios si no existen
 	os.makedirs(MODEL_DIR, exist_ok=True)
@@ -309,18 +359,70 @@ def main():
 	X_test_scaled = scaler.transform(X_test)
 	print("Escalado completado con StandardScaler")
 	
-	# 4. Búsqueda de hiperparámetros con Keras Tuner
+	# 4. Búsqueda de hiperparámetros con Keras Tuner (o cargar previos)
 	input_dim = X_train_scaled.shape[1]
-	best_hps, tuner = run_hyperparameter_search(X_train_scaled, y_train, input_dim, TUNER_DIR)
 	
-	# 5. Construir y entrenar el mejor modelo
-	print("\n" + "="*60)
-	print("FASE 3: ENTRENAMIENTO DEL MEJOR MODELO")
-	print("="*60)
+	if skip_tuning and os.path.exists(HYPERPARAMS_PATH):
+		# Cargar hiperparámetros previos
+		print("\n" + "="*60)
+		print("CARGANDO HIPERPARÁMETROS GUARDADOS (SALTANDO BÚSQUEDA)")
+		print("="*60)
+		
+		with open(HYPERPARAMS_PATH, 'r') as f:
+			best_hyperparameters = json.load(f)
+		
+		print("\nHiperparámetros cargados:")
+		print(f"Unidades capa 1: {best_hyperparameters['units_layer_1']}")
+		print(f"Activación capa 1: {best_hyperparameters['activation_layer_1']}")
+		print(f"Dropout 1: {best_hyperparameters['dropout_1']}")
+		print(f"Número de capas ocultas: {best_hyperparameters['num_layers']}")
+		
+		for i in range(best_hyperparameters['num_layers']):
+			print(f"Unidades capa {i+2}: {best_hyperparameters[f'units_layer_{i+2}']}")
+			print(f"Activación capa {i+2}: {best_hyperparameters[f'activation_layer_{i+2}']}")
+			print(f"Dropout {i+2}: {best_hyperparameters[f'dropout_{i+2}']}")
+		
+		print(f"Learning rate: {best_hyperparameters['learning_rate']}")
+		print("="*60)
+		
+		# Construir modelo con hiperparámetros cargados
+		print("\n" + "="*60)
+		print("FASE 3: ENTRENAMIENTO DEL MODELO")
+		print("="*60)
+		best_model = build_model_from_hyperparameters(best_hyperparameters, input_dim)
+		
+	else:
+		# Ejecutar búsqueda de hiperparámetros
+		if skip_tuning:
+			print("\n⚠️ ADVERTENCIA: --skip-tuning especificado pero no se encontraron hiperparámetros guardados.")
+			print(f"Buscando en: {HYPERPARAMS_PATH}")
+			print("Procediendo con búsqueda de hiperparámetros...\n")
+		
+		best_hps, tuner = run_hyperparameter_search(X_train_scaled, y_train, input_dim, TUNER_DIR)
+		
+		# Guardar hiperparámetros para uso futuro
+		best_hyperparameters = {
+			'units_layer_1': best_hps.get('units_layer_1'),
+			'activation_layer_1': best_hps.get('activation_layer_1'),
+			'dropout_1': best_hps.get('dropout_1'),
+			'num_layers': best_hps.get('num_layers'),
+			'learning_rate': best_hps.get('learning_rate')
+		}
+		
+		for i in range(best_hps.get('num_layers')):
+			best_hyperparameters[f'units_layer_{i+2}'] = best_hps.get(f'units_layer_{i+2}')
+			best_hyperparameters[f'activation_layer_{i+2}'] = best_hps.get(f'activation_layer_{i+2}')
+			best_hyperparameters[f'dropout_{i+2}'] = best_hps.get(f'dropout_{i+2}')
+		
+		# 5. Construir y entrenar el mejor modelo
+		print("\n" + "="*60)
+		print("FASE 3: ENTRENAMIENTO DEL MEJOR MODELO")
+		print("="*60)
+		
+		# Construir modelo con mejores hiperparámetros
+		best_model = tuner.hypermodel.build(best_hps)
 	
-	# Construir modelo con mejores hiperparámetros
-	best_model = tuner.hypermodel.build(best_hps)
-	print("\nArquitectura del mejor modelo:")
+	print("\nArquitectura del modelo:")
 	best_model.summary()
 	
 	# Callbacks para entrenamiento final
@@ -333,7 +435,7 @@ def main():
 	)
 	
 	model_checkpoint = ModelCheckpoint(
-		os.path.join(MODEL_DIR, 'best_model.h5'),
+		os.path.join(MODEL_DIR, 'best_model.keras'),
 		monitor='val_auc',
 		mode='max',
 		save_best_only=True,
@@ -367,32 +469,21 @@ def main():
 	print("="*60)
 	
 	# Guardar modelo final
-	best_model.save(os.path.join(MODEL_DIR, 'liver_cancer_model.h5'))
-	print(f"Modelo guardado en: {MODEL_DIR}/liver_cancer_model.h5")
+	best_model.save(os.path.join(MODEL_DIR, 'liver_cancer_model.keras'))
+	print(f"Modelo guardado en: {MODEL_DIR}/liver_cancer_model.keras")
 	
 	# Guardar scaler
 	with open(os.path.join(MODEL_DIR, 'scaler.pkl'), 'wb') as f:
 		pickle.dump(scaler, f)
 	print(f"Scaler guardado en: {MODEL_DIR}/scaler.pkl")
 	
-	# Guardar mejores hiperparámetros
-	best_hyperparameters = {
-		'units_layer_1': best_hps.get('units_layer_1'),
-		'activation_layer_1': best_hps.get('activation_layer_1'),
-		'dropout_1': best_hps.get('dropout_1'),
-		'num_layers': best_hps.get('num_layers'),
-		'learning_rate': best_hps.get('learning_rate')
-	}
-	
-	# Agregar hiperparámetros de capas adicionales
-	for i in range(best_hps.get('num_layers')):
-		best_hyperparameters[f'units_layer_{i+2}'] = best_hps.get(f'units_layer_{i+2}')
-		best_hyperparameters[f'activation_layer_{i+2}'] = best_hps.get(f'activation_layer_{i+2}')
-		best_hyperparameters[f'dropout_{i+2}'] = best_hps.get(f'dropout_{i+2}')
-	
-	with open(os.path.join(MODEL_DIR, 'best_hyperparameters.json'), 'w') as f:
-		json.dump(best_hyperparameters, f, indent=2)
-	print(f"Mejores hiperparámetros guardados en: {MODEL_DIR}/best_hyperparameters.json")
+	# Guardar mejores hiperparámetros (solo si no fueron cargados de archivo)
+	if not (skip_tuning and os.path.exists(HYPERPARAMS_PATH)):
+		with open(os.path.join(MODEL_DIR, 'best_hyperparameters.json'), 'w') as f:
+			json.dump(best_hyperparameters, f, indent=2)
+		print(f"Mejores hiperparámetros guardados en: {MODEL_DIR}/best_hyperparameters.json")
+	else:
+		print(f"Hiperparámetros ya existentes en: {MODEL_DIR}/best_hyperparameters.json")
 	
 	# Guardar metadata completa
 	test_metrics = best_model.evaluate(X_test_scaled, y_test, verbose=0)
@@ -419,8 +510,16 @@ def main():
 	print(f"\nResumen de resultados:")
 	print(f"  • Test Accuracy: {metadata['model_performance']['test_accuracy']:.4f}")
 	print(f"  • Test AUC: {metadata['model_performance']['test_auc']:.4f}")
-	print(f"  • Arquitectura: {best_hps.get('num_layers')+1} capas ocultas")
+	print(f"  • Arquitectura: {best_hyperparameters['num_layers']+1} capas ocultas")
 	print("="*60)
 
 if __name__ == "__main__":
-	main()
+	parser = argparse.ArgumentParser(description='Entrenar modelo de predicción de cáncer de hígado')
+	parser.add_argument(
+		'--skip-tuning',
+		action='store_true',
+		help='Saltar búsqueda de hiperparámetros y usar los guardados previamente'
+	)
+	args = parser.parse_args()
+	
+	main(skip_tuning=args.skip_tuning)

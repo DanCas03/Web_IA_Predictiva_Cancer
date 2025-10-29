@@ -87,7 +87,7 @@ def check_model_trained():
     print_header("Verificando Modelo Entrenado")
     
     model_files = [
-        "backend/saved_models/liver_cancer_model.h5",
+        "backend/saved_models/liver_cancer_model.keras",
         "backend/saved_models/scaler.pkl",
         "backend/saved_models/feature_metadata.json"
     ]

@@ -50,6 +50,7 @@ data/limpiezaDeDatos.ipynb
 # Tuner results (muy grandes, mejor no subir)
 model/tuner_results/
 
+
 # Logs
 *.log
 

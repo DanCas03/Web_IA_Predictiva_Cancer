@@ -31,7 +31,7 @@ def load_model_artifacts():
 	
 	try:
 		# Cargar modelo Keras
-		model_path = 'saved_models/liver_cancer_model.h5'
+		model_path = 'saved_models/liver_cancer_model.keras'
 		model = tf.keras.models.load_model(model_path)
 		print(f"Modelo cargado desde: {model_path}")
 		
