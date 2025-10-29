@@ -99,7 +99,7 @@ function validateFormData(data) {
 		age: { min: 0, max: 120, name: 'Edad' },
 		bmi: { min: 10, max: 60, name: 'IMC' },
 		liver_function_score: { min: 0, max: 100, name: 'Puntuación de función hepática' },
-		alpha_fetoprotein_level: { min: 0, max: 1000, name: 'Nivel de alfa-fetoproteína' }
+		alpha_fetoprotein_level: { min: 0, max: 200, name: 'Nivel de alfa-fetoproteína' }
 	};
 	
 	for (const [field, validation] of Object.entries(numericValidations)) {
