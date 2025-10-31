@@ -343,6 +343,14 @@ header h1 {
 	transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
 	stroke-dasharray: 534.07;
 	stroke-dashoffset: 534.07;
+	stroke-linecap: round; /* Para que cuando se imprima se vea bien */
+	vector-effect: non-scaling-stroke; /* Para que cuando se imprima se vea bien */
+	shape-rendering: geometricPrecision;
+}
+
+.progress-ring,
+.risk-circle {
+	overflow: visible; /* Para que cuando se imprima se vea bien */
 }
 
 .risk-percentage-overlay {
