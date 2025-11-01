@@ -25,6 +25,32 @@ encoders = None
 
 # Ruta absoluta a la carpeta del frontend (../frontend respecto a este archivo)
 FRONTEND_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+PREDICTIONS_LOG_PATH = os.path.join(DATA_FOLDER, 'predictions_log.csv')
+
+def _str_to_bool(value: str) -> bool:
+	"""
+	Convierte strings comunes a boolean (true/false) de forma tolerante.
+	Acepta: true, 1, yes, y, si, sí (case-insensitive)
+	"""
+	if value is None:
+		return False
+	value = str(value).strip().lower()
+	return value in {"true", "1", "yes", "y", "si", "sí"}
+
+def append_prediction_to_csv(row: dict):
+	"""
+	Agrega una fila al CSV de logs de predicciones en data/predictions_log.csv
+	Crea el directorio/archivo si no existe.
+	"""
+	try:
+		os.makedirs(DATA_FOLDER, exist_ok=True)
+		# Escribir con cabecera sólo si el archivo no existe
+		file_exists = os.path.exists(PREDICTIONS_LOG_PATH)
+		df_row = pd.DataFrame([row])
+		df_row.to_csv(PREDICTIONS_LOG_PATH, mode='a', index=False, header=not file_exists, encoding='utf-8')
+	except Exception as e:
+		app.logger.error(f"No se pudo guardar la predicción en CSV: {e}")
 
 def load_model_artifacts():
 	"""
@@ -244,6 +270,15 @@ def predict():
 			'timestamp': datetime.now().isoformat()
 		}
 		
+		# 7. Si se solicita, guardar la información en CSV
+		save_param = request.args.get('save') or request.args.get('conservar') or request.args.get('guardar')
+		if _str_to_bool(save_param):
+			row_to_save = {
+				**data,
+				'timestamp': response['timestamp']
+			}
+			append_prediction_to_csv(row_to_save)
+
 		# Log de predicción (útil para auditoría)
 		app.logger.info(f"Predicción realizada: {risk_percentage}% - {risk_level}")
 		
