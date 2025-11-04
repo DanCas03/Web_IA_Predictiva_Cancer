@@ -350,7 +350,7 @@ header h1 {
 
 .progress-ring,
 .risk-circle {
-	overflow: visible; /* Para que cuando se imprima se vea bien * waza/
+	overflow: visible; /* Para que cuando se imprima se vea bien * waza*/
 }
 
 .risk-percentage-overlay {
